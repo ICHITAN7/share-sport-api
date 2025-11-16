@@ -3,80 +3,74 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreHighlightRequest;
+use App\Http\Requests\UpdateHighlightRequest;
 use App\Models\Highlight;
-use App\Http\Requests\Store_highlight_requests;
-use App\Http\Requests\update_highlight_requests;
-use Illuminate\Http\Request;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class HighlightController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    use AuthorizesRequests;
+    public function __construct()
+    {
+        $this->middleware('auth:sanctum')->except(['index', 'showBySlug']);
+    }
+
     public function index()
     {
-        return Highlight::latest()->paginate(20);
+        return Highlight::with(['author','category'])
+                ->where('is_published', true)
+                // ->where(function($query) {
+                // $query->where('published_at', '<=', now())
+                //       ->orWhereNull('published_at');
+                // })
+                ->latest('published_at')
+                ->paginate(20);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Store_highlight_requests $request)
+    public function showBySlug($slug)
     {
-        $user = $request->user(); 
-            if (!$user) {
-                return response()->json(['message' => 'Unauthorized'], 401);
-            }
-        $highlight = Highlight::create(array_merge(
-            $request->validated(),
-            [
-                'user_id' => $user->id,
-            ]
-        ));
-
-        return response()->json($highlight, 201);
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Highlight $highlight)
-    {
+        $highlight = Highlight::with(['category', 'author'])
+            ->where('slug', $slug)
+            ->where('is_published', true)
+            ->firstOrFail();
         return $highlight;
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(update_highlight_requests $request, Highlight $highlight)
+    // Create highlight
+    public function store(StoreHighlightRequest $request)
     {
-        $user = $request->user(); 
-            if (!$user) {
-                return response()->json(['message' => 'Unauthorized'], 401);
-            }
-        if ($highlight->user_id !== $user->id) { 
-            return response()->json(['message' => 'Forbidden: You do not own this highlight'], 403);
-        }
+        $this->authorize('create', Highlight::class);
+        $validated = $request->validated();
 
-        $highlight->update($request->validated());
+        $validated['author_id'] = $request->user()->id;
 
-        return response()->json($highlight);
+        $highlight = Highlight::create($validated);
+
+        return response()->json($highlight->load(['category', 'author']), 201);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Highlight $highlight,  Request $request)
+    public function show(Highlight $highlight)
     {
-        $user = $request->user();
-        if (!$user) {
-            return response()->json(['message' => 'Unauthorized'], 401);
-        }
-        if ($highlight->user_id !== $user->id) { 
-            return response()->json(['message' => 'Forbidden: You do not own this highlight'], 403);
-        }
-        $highlight->delete();
+        $this->authorize('update', $highlight);
+        return $highlight->load(['category','author']);
+    }
 
-        return response()->json(['message' => 'Highlight deleted'], 200);
+    // Update highlight
+    public function update(UpdateHighlightRequest $request, Highlight $highlight)
+    {
+        $this->authorize('update', $highlight);
+        $validated = $request->validated();
+        $highlight->update($validated);
+
+        return response()->json($highlight->load(['author','category']));
+    }
+
+    // Delete highlight
+    public function destroy(Highlight $highlight)
+    {
+        $this->authorize('delete', $highlight);
+        $highlight->delete();
+        return response()->json(null,204);
     }
 }

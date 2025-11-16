@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Backend Models Report</title>
+<style>
+  body { font-family: Arial, sans-serif; font-size: 12px; background: #f4f4f4; color: #333; padding: 10px; }
+  h1 { text-align: center; font-size: 18px; margin-bottom: 5px; }
+  table { width: 100%; border-collapse: collapse; margin: 5px 0; font-size: 11px; }
+  th, td { border: 1px solid #999; padding: 4px; text-align: left; }
+  th { background: #3498db; color: #fff; font-size: 12px; }
+  tr:nth-child(even) { background: #eee; }
+  .model-name { background: #2c3e50; color: #fff; text-align: center; font-weight: bold; }
+</style>
+</head>
+<body>
+<h1>Backend Models Report</h1>
+<table>
+  <thead>
+    <tr><th>Model</th><th>Field</th><th>Description</th></tr>
+  </thead>
+  <tbody>
+    <tr><td class="model-name" rowspan="6">Banner</td><td>title</td><td>Banner title</td></tr>
+    <tr><td>image_url</td><td>Banner image URL</td></tr>
+    <tr><td>link_url</td><td>Destination URL</td></tr>
+    <tr><td>position</td><td>Display order/position</td></tr>
+    <tr><td>start_at</td><td>Banner start date/time</td></tr>
+    <tr><td>end_at</td><td>Banner end date/time</td></tr>
+
+    <tr><td class="model-name" rowspan="3">Category</td><td>name</td><td>Category name</td></tr>
+    <tr><td>slug</td><td>URL-friendly identifier</td></tr>
+    <tr><td>icon_url</td><td>Category icon</td></tr>
+
+    <tr><td class="model-name" rowspan="3">Comment</td><td>news_id</td><td>Related news article</td></tr>
+    <tr><td>user_name</td><td>Name of commenter</td></tr>
+    <tr><td>message</td><td>Comment text</td></tr>
+
+    <tr><td class="model-name" rowspan="2">Like</td><td>news_id</td><td>Related news article</td></tr>
+    <tr><td>user_ip</td><td>IP of liker</td></tr>
+
+    <tr><td class="model-name" rowspan="13">News</td><td>title</td><td>News title</td></tr>
+    <tr><td>slug</td><td>URL-friendly identifier</td></tr>
+    <tr><td>summary</td><td>Short summary</td></tr>
+    <tr><td>content</td><td>Full article content</td></tr>
+    <tr><td>thumbnail_url</td><td>Small image preview</td></tr>
+    <tr><td>image_url</td><td>Main image</td></tr>
+    <tr><td>video_url</td><td>Embedded video URL</td></tr>
+    <tr><td>category_id</td><td>Related category</td></tr>
+    <tr><td>author_id</td><td>Author ID</td></tr>
+    <tr><td>is_breaking</td><td>Breaking news flag</td></tr>
+    <tr><td>is_featured</td><td>Featured flag</td></tr>
+    <tr><td>is_published</td><td>Published status</td></tr>
+    <tr><td>published_at</td><td>Publication date/time</td></tr>
+
+    <tr><td class="model-name" rowspan="2">Tag</td><td>name</td><td>Tag name</td></tr>
+    <tr><td>slug</td><td>URL-friendly identifier</td></tr>
+
+    <tr><td class="model-name" rowspan="5">User</td><td>name</td><td>User full name</td></tr>
+    <tr><td>email</td><td>Email address</td></tr>
+    <tr><td>password_hash</td><td>Encrypted password</td></tr>
+    <tr><td>avatar_url</td><td>Profile picture</td></tr>
+    <tr><td>role</td><td>User role</td></tr>
+
+    <tr><td class="model-name" rowspan="2">View</td><td>news_id</td><td>Related news article</td></tr>
+    <tr><td>user_ip</td><td>IP address of viewer</td></tr>
+  </tbody>
+</table>
+</body>
+</html>

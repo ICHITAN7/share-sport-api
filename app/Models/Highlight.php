@@ -9,26 +9,34 @@ class Highlight extends Model
 {
     use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
-        'user_id',
-        'match_id',
         'title',
-        'description',
+        'slug',
+        'summary',
+        'content',
+        'thumbnail_url',
         'video_url',
-        'categories',
+        'category_id',
+        'author_id',
+        'is_featured',
+        'is_published',
+        'published_at',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
-        // No special casts needed for this model
+        'is_featured' => 'boolean',
+        'is_published' => 'boolean',
+        'published_at' => 'datetime',
     ];
+
+    // Relations
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    public function author()
+    {
+        return $this->belongsTo(User::class, 'author_id');
+    }
 }

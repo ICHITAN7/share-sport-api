@@ -2,72 +2,65 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Hash;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasApiTokens;
+    use HasApiTokens, HasFactory, Notifiable;
+    
+    // protected $connection = 'd1';
 
     /**
      * The attributes that are mass assignable.
      *
-     * @var list<string>
+     * @var array<int, string>
      */
     protected $fillable = [
         'name',
         'email',
-        'password',  
-        'rule',    
-        'est',
+        'password_hash',
+        'avatar_url',
+        'role',
     ];
 
     /**
      * The attributes that should be hidden for serialization.
      *
-     * @var list<string>
+     * @var array<int, string>
      */
     protected $hidden = [
-        'password',
-        'remember_token',
+        'password_hash',
     ];
 
     /**
-     * Get the attributes that should be cast.
+     * The attributes that should be cast.
      *
-     * @return array<string, string>
+     * @var array<string, string>
      */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
-    }
+    protected $casts = [
+        // 'role' is already handled by Enum in migration
+    ];
 
-    protected static function booted(): void
+    /**
+     * Mutator to always hash the password when setting.
+     * We use this so we can name the field 'password' in the API request
+     * but save it to 'password_hash'.
+     */
+    public function setPasswordAttribute($value)
     {
-        static::created(function (User $user) {
-            $user->uid = str_pad((string)$user->id, 5, '0', STR_PAD_LEFT);
-            $user->save();
-        });
-    }
-
-    public function articles(): HasMany
-    {
-        return $this->hasMany(Article::class);
+        $this->attributes['password_hash'] = Hash::make($value);
     }
 
     /**
-     * Get all of the highlights for the User
+     * Get the news articles written by this user.
      */
-    public function highlights(): HasMany
+    public function news(): HasMany
     {
-        return $this->hasMany(Highlight::class);
+        return $this->hasMany(News::class, 'author_id');
     }
 }

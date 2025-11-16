@@ -8,12 +8,28 @@ use Illuminate\Auth\Access\Response;
 
 class HighlightPolicy
 {
+    public function before(User $user,string $ability):bool|null
+    {
+        if($user->role==='admin'){
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Determine whether the user can create models.
+     */
+    public function create(User $user): bool
+    {
+        return $user->role=='writer';
+    }
+
     /**
      * Determine whether the user can update the model.
      */
     public function update(User $user, Highlight $highlight): bool
     {
-        return $user->id === $highlight->user_id || $user->rule === 'manager';
+        return $user->id === $highlight -> author_id;
     }
 
     /**
@@ -21,6 +37,6 @@ class HighlightPolicy
      */
     public function delete(User $user, Highlight $highlight): bool
     {
-        return $user->id === $highlight->user_id || $user->rule === 'manager';
+        return $user->id === $highlight-> author_id;
     }
 }

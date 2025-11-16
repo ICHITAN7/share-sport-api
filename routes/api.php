@@ -1,46 +1,64 @@
 <?php
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\ArticleController;
-use App\Http\Controllers\Api\HighlightController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\NewsController;
+use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\TagController;
+use App\Http\Controllers\Api\BannerController;
+use App\Http\Controllers\Api\CommentController;
+use App\Http\Controllers\Api\LikeViewController;
+use App\Http\Controllers\Api\HighlightController;
 
 /*
 |--------------------------------------------------------------------------
 | API Routes
 |--------------------------------------------------------------------------
 */
-//search Routes
-Route::get('/user/{user}',[UserController::class,'find'])->name('api.users.find');
 
-// --- Public Authentication Routes ---
+// --- Public Auth Routes ---
 Route::post('/register', [AuthController::class, 'register'])->name('api.register');
 Route::post('/login', [AuthController::class, 'login'])->name('api.login');
 
-// --- Public Read-Only Routes ---
-Route::get('articles', [ArticleController::class, 'index'])->name('api.articles.index');
-Route::get('articles/{article}', [ArticleController::class, 'show'])->name('api.articles.show');
-Route::get('highlights', [HighlightController::class, 'index'])->name('api.highlights.index');
-Route::get('highlights/{highlight}', [HighlightController::class, 'show'])->name('api.highlights.show');
+// --- Public Content Routes (for your website frontend) ---
+Route::get('/news', [NewsController::class, 'index']);
+Route::get('/news/{slug}', [NewsController::class, 'showBySlug']);
+Route::get('/highlights', [HighlightController::class, 'index']);
+Route::get('/highlights/{slug}', [HighlightController::class, 'showBySlug']);
+Route::get('/categories', [CategoryController::class, 'index']);
+Route::get('/tags', [TagController::class, 'index']);
+Route::get('/banners', [BannerController::class, 'index']);
 
+// Comments, Likes, Views (Public interaction)
+Route::post('/news/{id}/comments', [CommentController::class, 'store']);
+Route::post('/news/{id}/like', [LikeViewController::class, 'storeLike']);
+Route::post('/news/{id}/view', [LikeViewController::class, 'storeView']);
+
+// --- Admin Protected Routes (for your dashboard) ---
 Route::middleware('auth:sanctum')->group(function () {
     
-    // Auth routes
-    Route::get('/user', [AuthController::class, 'user'])->name('api.user');
-    Route::post('/logout', [AuthController::class, 'logout'])->name('api.logout');
-    // Route::patch('/update', [AuthController::class, 'update'])->name('api.update');
-    Route::patch('/updateprofile', [AuthController::class, 'updateProfile'])->name('api.update');
+    // Auth
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/user', [AuthController::class, 'user']);
+    Route::patch('/user/profile', [UserController::class, 'updateProfile']); // User updates self
 
-    // Article Admin Routes
-    Route::post('articles', [ArticleController::class, 'store'])->name('api.articles.store');
-    Route::put('articles/{article}', [ArticleController::class, 'update'])->name('api.articles.update');
-    Route::patch('articles/{article}', [ArticleController::class, 'update'])->name('api.articles.patch');
-    Route::delete('articles/{article}', [ArticleController::class, 'destroy'])->name('api.articles.destroy');
+    // User Management (Admin Only)
+    Route::apiResource('/users', UserController::class)->only(['index', 'update']);
 
-    // Highlight Admin Routes
-    Route::post('highlights', [HighlightController::class, 'store'])->name('api.highlights.store');
-    Route::put('highlights/{highlight}', [HighlightController::class, 'update'])->name('api.highlights.update');
-    Route::patch('highlights/{highlight}', [HighlightController::class, 'update'])->name('api.highlights.patch');
-    Route::delete('highlights/{highlight}', [HighlightController::class, 'destroy'])->name('api.highlights.destroy');
+    // Full CRUD for Admin
+    Route::apiResource('/admin/news', NewsController::class)->parameters(['news' => 'news']);
+    Route::apiResource('/admin/highlights', HighlightController::class);
+    Route::apiResource('/admin/categories', CategoryController::class)->parameters(['categories' => 'category']);
+    Route::apiResource('/admin/tags', TagController::class)->parameters(['tags' => 'tag']);
+    Route::apiResource('/admin/banners', BannerController::class);
+    
+    // Comment Management (Admin)
+    Route::get('/admin/comments', [CommentController::class, 'index']);
+    Route::delete('/admin/comments/{comment}', [CommentController::class, 'destroy']);
+    
+    // Stats (Admin)
+    Route::get('/admin/stats/news/{id}/likes', [LikeViewController::class, 'getLikesForNews']);
+    Route::get('/admin/stats/news/{id}/views', [LikeViewController::class, 'getViewsForNews']);
 });

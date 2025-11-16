@@ -30,7 +30,16 @@ return [
     */
 
     'connections' => [
-
+        'd1' => [
+            'driver' => 'd1',
+            'prefix' => '',
+            'database' => env('CLOUDFLARE_D1_DATABASE_ID', ''),
+            'api' => env('CLOUDFLARE_D1_API_URL', 'https://api.cloudflare.com/client/v4'),
+            'auth' => [
+                'token' => env('CLOUDFLARE_D1_TOKEN', ''),
+                'account_id' => env('CLOUDFLARE_ACCOUNT_ID', ''),
+            ],
+        ],
         'sqlite' => [
             'driver' => 'sqlite',
             'url' => env('DB_URL'),
