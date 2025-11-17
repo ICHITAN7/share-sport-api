@@ -12,20 +12,21 @@ class View extends Model
 
     public const UPDATED_AT = null;
     public $timestamps = false; // Manually handled by 'viewed_at'
-    
+
     // Set the CREATED_AT constant to 'viewed_at'
     const CREATED_AT = 'viewed_at';
 
     protected $fillable = [
-        'news_id',
+        'viewable_id',
+        'viewable_type',
         'user_ip',
     ];
 
     /**
      * Get the news article this view belongs to.
      */
-    public function news(): BelongsTo
+    public function viewable()
     {
-        return $this->belongsTo(News::class);
+        return $this->morphTo();
     }
 }

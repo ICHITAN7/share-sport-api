@@ -22,6 +22,7 @@ class NewsController extends Controller
     public function index()
     {
         return News::with(['category', 'author', 'tags'])
+            ->withCount('views')
             ->where('is_published', true)
             ->where(function($query) {
                 $query->where('published_at', '<=', now())
@@ -36,7 +37,8 @@ class NewsController extends Controller
      */
     public function showBySlug($slug)
     {
-        $news = News::with(['category', 'author', 'tags', 'comments'])
+        $news = News::with(['category', 'author', 'tags'])
+            ->withCount('views')
             ->where('slug', $slug)
             ->where('is_published', true)
             ->firstOrFail();
@@ -51,9 +53,9 @@ class NewsController extends Controller
     public function store(StoreNewsRequest $request)
     {
         $this->authorize('create', News::class);
-        
+
         $validated = $request->validated();
-        
+
         // Set author_id from the logged-in user
         $validated['author_id'] = $request->user()->id;
 
@@ -85,7 +87,7 @@ class NewsController extends Controller
         $this->authorize('update', $news);
 
         $validated = $request->validated();
-        
+
         $news->update($validated);
 
         // Sync tags if they are part of the request
@@ -102,7 +104,7 @@ class NewsController extends Controller
     public function destroy(News $news)
     {
         $this->authorize('delete', $news);
-        
+
         // Tags will be detached automatically due to DB cascade
         $news->delete();
 

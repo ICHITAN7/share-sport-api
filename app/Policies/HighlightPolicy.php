@@ -13,7 +13,7 @@ class HighlightPolicy
         if($user->role==='admin'){
             return true;
         }
-        return false;
+        return null;
     }
 
     /**

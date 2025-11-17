@@ -20,6 +20,7 @@ class HighlightController extends Controller
     {
         return Highlight::with(['author','category'])
                 ->where('is_published', true)
+                ->withCount('views')
                 // ->where(function($query) {
                 // $query->where('published_at', '<=', now())
                 //       ->orWhereNull('published_at');
@@ -31,6 +32,7 @@ class HighlightController extends Controller
     public function showBySlug($slug)
     {
         $highlight = Highlight::with(['category', 'author'])
+            ->withCount('views')
             ->where('slug', $slug)
             ->where('is_published', true)
             ->firstOrFail();

@@ -32,13 +32,13 @@ Route::get('/tags', [TagController::class, 'index']);
 Route::get('/banners', [BannerController::class, 'index']);
 
 // Comments, Likes, Views (Public interaction)
-Route::post('/news/{id}/comments', [CommentController::class, 'store']);
-Route::post('/news/{id}/like', [LikeViewController::class, 'storeLike']);
-Route::post('/news/{id}/view', [LikeViewController::class, 'storeView']);
-
+// Route::post('/news/{id}/comments', [CommentController::class, 'store']);
+// Route::post('/news/{id}/like', [LikeViewController::class, 'storeLike']);
+Route::post('/news/{news}', [LikeViewController::class, 'storeViewForNews']);
+Route::post('/highlight/{highlight}', [LikeViewController::class, 'storeViewForHighlight']);
 // --- Admin Protected Routes (for your dashboard) ---
 Route::middleware('auth:sanctum')->group(function () {
-    
+
     // Auth
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', [AuthController::class, 'user']);
@@ -53,12 +53,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/admin/categories', CategoryController::class)->parameters(['categories' => 'category']);
     Route::apiResource('/admin/tags', TagController::class)->parameters(['tags' => 'tag']);
     Route::apiResource('/admin/banners', BannerController::class);
-    
-    // Comment Management (Admin)
-    Route::get('/admin/comments', [CommentController::class, 'index']);
-    Route::delete('/admin/comments/{comment}', [CommentController::class, 'destroy']);
-    
+
     // Stats (Admin)
-    Route::get('/admin/stats/news/{id}/likes', [LikeViewController::class, 'getLikesForNews']);
-    Route::get('/admin/stats/news/{id}/views', [LikeViewController::class, 'getViewsForNews']);
+    Route::get('/admin/stats/news/{news}', [LikeViewController::class, 'getViewsForNews']);
+    Route::get('/admin/stats/highlight/{highlight}', [LikeViewController::class, 'getViewsForHighlight']);
 });

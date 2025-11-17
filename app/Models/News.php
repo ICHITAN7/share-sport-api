@@ -76,27 +76,8 @@ class News extends Model
         return $this->belongsToMany(Tag::class, 'news_tags');
     }
 
-    /**
-     * Get all comments for this news.
-     */
-    public function comments(): HasMany
+    public function views()
     {
-        return $this->hasMany(Comment::class);
-    }
-
-    /**
-     * Get all likes for this news.
-     */
-    public function likes(): HasMany
-    {
-        return $this->hasMany(Like::class);
-    }
-
-    /**
-     * Get all views for this news.
-     */
-    public function views(): HasMany
-    {
-        return $this->hasMany(View::class);
+        return $this->morphMany(View::class, 'viewable');
     }
 }

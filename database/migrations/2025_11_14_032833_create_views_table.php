@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('views', function (Blueprint $table) {
-            $table->id(); // BIGINT PRIMARY KEY AUTO_INCREMENT
-            $table->foreignId('news_id')->constrained('news')->onDelete('cascade');
+            $table->id();
+            $table->morphs('viewable');
             $table->string('user_ip', 60)->nullable();
             $table->timestamp('viewed_at')->default(now());
         });
