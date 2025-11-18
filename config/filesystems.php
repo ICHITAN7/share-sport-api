@@ -32,7 +32,7 @@ return [
 
         'local' => [
             'driver' => 'local',
-            'root' => storage_path('app/private'),
+            'root' => storage_path('app/public'),
             'serve' => true,
             'throw' => false,
             'report' => false,
@@ -58,6 +58,15 @@ return [
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
             'throw' => false,
             'report' => false,
+        ],
+        'r2' => [
+            'driver' => 's3',
+            'key' => env('R2_ACCESS_KEY_ID'),       // Access Key
+            'secret' => env('R2_SECRET_ACCESS_KEY'), // Secret Key
+            'region' => 'auto',                     // Always 'auto'
+            'bucket' => env('R2_BUCKET_NAME'),      // R2 Bucket
+            'endpoint' => env('R2_ENDPOINT'),       // https://<accountid>.r2.cloudflarestorage.com
+            'use_path_style_endpoint' => true,      // Important for R2
         ],
 
     ],

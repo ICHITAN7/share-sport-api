@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Hash;
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
-    
+    public $rememberTokenName = false;
     // protected $connection = 'd1';
 
     /**
@@ -46,19 +46,19 @@ class User extends Authenticatable
         // 'role' is already handled by Enum in migration
     ];
 
-    /**
-     * Mutator to always hash the password when setting.
-     * We use this so we can name the field 'password' in the API request
-     * but save it to 'password_hash'.
-     */
     public function setPasswordAttribute($value)
     {
         $this->attributes['password_hash'] = Hash::make($value);
     }
+    public function canAccessFilament(): bool
+    {
+        return $this->role('admin');
+    }
+    public function getAuthPassword()
+    {
+        return $this->password_hash;
+    }
 
-    /**
-     * Get the news articles written by this user.
-     */
     public function news(): HasMany
     {
         return $this->hasMany(News::class, 'author_id');

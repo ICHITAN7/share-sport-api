@@ -21,8 +21,8 @@ class AuthController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password_hash' => Hash::make($request->password), // Uses setPasswordAttribute in Model
-            'role' => 'viewer', // Default role
+            'password_hash' => Hash::make($request->password),
+            'role' => 'viewer',
         ]);
 
         $token = $user->createToken('admin-token')->plainTextToken;
@@ -45,7 +45,7 @@ class AuthController extends Controller
         if (!$user || !Hash::check($request->password, $user->password_hash)) {
             return response()->json(['message' => 'Invalid credentials'], 401);
         }
-        
+
         // Revoke all old tokens and create a new one
         $user->tokens()->delete();
         $token = $user->createToken('admin-token')->plainTextToken;
