@@ -2,15 +2,13 @@
 
 namespace App\Filament\Resources\Banners\Schemas;
 
-use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
-use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-use Illuminate\Support\Facades\Storage;
 
 class BannerForm
 {
@@ -25,17 +23,27 @@ class BannerForm
                         ->directory('banners')
                         ->deleteUploadedFileUsing(function ($filename) {
                             print $filename;
-                        }),
+                        })->required(),
                     Select::make('position')
+                        ->label('Position')
                         ->options(['header' => 'Header', 'sidebar' => 'Sidebar', 'footer' => 'Footer', 'mobile' => 'Mobile'])
+                        ->native(false)
                         ->required(),
 
                 ]),
                 Section::make()->schema([
-                    Textarea::make('link_url'),
+                    Textarea::make('link_url')
+                        ->label('Link'),
                     TextInput::make('title'),
-                    DateTimePicker::make('start_at'),
-                    DateTimePicker::make('end_at'),
+                    DatePicker::make('start_at')
+                        ->label('Date Start')
+                        ->native(false)
+                        ->required(),
+                    DatePicker::make('end_at')
+                        ->label('Date End')
+                        ->afterOrEqual('start_at')
+                        ->native(false),
+
                 ])
             ])->columns(2);
     }

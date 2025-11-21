@@ -13,12 +13,19 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class ViewResource extends Resource
 {
     protected static ?string $model = View::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedViewfinderCircle;
+
+    protected static string | BackedEnum | null $activeNavigationIcon = Heroicon::ViewfinderCircle;
+
+    protected static string | UnitEnum | null $navigationGroup = 'General';
+
+    protected static ?int $navigationSort = 3;
 
     protected static ?string $recordTitleAttribute = 'View';
 

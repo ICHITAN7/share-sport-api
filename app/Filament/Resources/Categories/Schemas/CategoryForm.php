@@ -2,9 +2,10 @@
 
 namespace App\Filament\Resources\Categories\Schemas;
 
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-use Illuminate\Support\Str;
 
 class CategoryForm
 {
@@ -12,17 +13,21 @@ class CategoryForm
     {
         return $schema
             ->components([
-                TextInput::make('name')
-                    ->required()
-                    ->reactive()
-                    ->afterStateUpdated(function ($state, callable $set) {
-                        $set('slug', Str::slug($state));
-                    }),
-                TextInput::make('slug')
-                    ->required()
-                    ->readOnly(),
-                TextInput::make('icon_url')
-                    ->columnSpanFull(),
+                Section::make([
+                    TextInput::make('name')
+                        ->required(),
+                    FileUpload::make('icon_url')
+                        ->label('Icon')
+                        ->disk('r2')
+                        ->directory('icons')
+                        ->deleteUploadedFileUsing(function ($filename) {
+                            print $filename;
+                        })->required()
+                ]),
+
+//                TextInput::make('slug')
+//                    ->required()
+//                    ->readOnly(),
             ]);
     }
 }

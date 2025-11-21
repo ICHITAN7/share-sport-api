@@ -9,6 +9,7 @@ use App\Filament\Resources\Highlights\Schemas\HighlightForm;
 use App\Filament\Resources\Highlights\Tables\HighlightsTable;
 use App\Models\Highlight;
 use BackedEnum;
+use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -20,6 +21,9 @@ class HighlightResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTv;
 
+    protected static string|BackedEnum|null $activeNavigationIcon = Heroicon::Tv;
+
+    protected static string | UnitEnum | null $navigationGroup = 'Author Management';
     protected static ?string $recordTitleAttribute = 'Highlight';
 
     public static function form(Schema $schema): Schema
