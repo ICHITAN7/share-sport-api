@@ -22,13 +22,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $user = auth()->user();
-        print $user;
         Table::configureUsing(function (table $table) {
             return $table
                 ->filtersLayout(FiltersLayout::Modal)
                 ->deferLoading()
                 ->striped();
         });
+        if (env('APP_ENV') !== 'local') {
+        URL::forceScheme('https');
+    }
     }
 }
