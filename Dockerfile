@@ -1,20 +1,20 @@
 FROM php:8.3-fpm
 
-# Install required extensions
 RUN apt-get update && apt-get install -y \
-    libzip-dev \
-    zip \
-    libicu-dev \
-    && docker-php-ext-install zip intl
+    libzip-dev zip libicu-dev \
+    npm \
+    && docker-php-ext-install zip intl pdo pdo_mysql
 
-# Copy project files
 WORKDIR /var/www/html
 COPY . .
 
-# Install composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Install dependencies
 RUN composer install --optimize-autoloader --no-scripts --no-interaction
+RUN npm install
+RUN npm run build
 
-CMD ["php-fpm"]
+RUN php artisan storage:link
+RUN php artisan optimize:clear
+
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8080"]
