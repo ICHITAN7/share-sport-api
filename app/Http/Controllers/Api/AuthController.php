@@ -49,7 +49,7 @@ class AuthController extends Controller
         // Revoke all old tokens and create a new one
         $user->tokens()->delete();
         $token = $user->createToken('admin-token')->plainTextToken;
-
+        $user = User::where('remember_token',$token);
         return response()->json([
             'user' => $user,
             'token' => $token,
